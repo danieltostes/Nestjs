@@ -1,8 +1,8 @@
-import { HttpCode, HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Product, ProductDocument } from "./schema/product.schema";
 import { Model } from "mongoose";
-import { IProduct } from "./interfaces/IProduct";
+import { ProductDto } from "./interfaces/IProduct";
 
 @Injectable()
 export class ProductsRepository {
@@ -10,13 +10,13 @@ export class ProductsRepository {
     @InjectModel(Product.name) private productModel: Model<ProductDocument>
   ){}
 
-  async create(product: IProduct) : Promise<IProduct>{
+  async create(product: ProductDto) : Promise<ProductDto>{
     const createdProduct = new this.productModel(product);
     await createdProduct.save();
     return createdProduct.toObject();
   }
 
-  async update(product: IProduct) : Promise<IProduct> {
+  async update(product: ProductDto) : Promise<ProductDto> {
     const res = await this.productModel.updateOne({ _id: product.id }, product);
     
     if (res.modifiedCount == 0) throw new HttpException("Product not found", HttpStatus.NOT_FOUND);
@@ -28,14 +28,14 @@ export class ProductsRepository {
     return "Product deleted";
   }
 
-  async getAll() : Promise<IProduct[]> {
+  async getAll() : Promise<ProductDto[]> {
     let products = await this.productModel.find();
     return products.map(function(e) {
       return e.toObject()
     })
   }
 
-  async getById(id: string) : Promise<IProduct> {
+  async getById(id: string) : Promise<ProductDto> {
     const product = await this.productModel.findById(id)
     
     if (!product) throw new HttpException("Product not found", HttpStatus.NOT_FOUND);

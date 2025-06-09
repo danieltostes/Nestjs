@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ProductsService } from './products.service';
-import { IProduct } from './interfaces/IProduct';
+import { ProductDto } from './interfaces/IProduct';
 
 @Controller('products')
 export class ProductsController {
@@ -9,22 +9,22 @@ export class ProductsController {
   ){}
 
   @Post()
-  async create(@Body() product: IProduct) : Promise<IProduct> {
+  async create(@Body() product: ProductDto) : Promise<ProductDto> {
     return await this.productsService.createProduct(product);
   }
 
   @Get()
-  async getAll() : Promise<IProduct[]> {
+  async getAll() : Promise<ProductDto[]> {
     return await this.productsService.getAllProducts();
   }
 
   @Get(":id")
-  async getById(@Param("id") id: string) : Promise<IProduct> {
+  async getById(@Param("id") id: string) : Promise<ProductDto> {
     return await this.productsService.getProductById(id);
   }
 
   @Put()
-  async update(@Body() product: IProduct) : Promise<IProduct> {
+  async update(@Body() product: ProductDto) : Promise<ProductDto> {
     return await this.productsService.updateProduct(product);
   }
 
