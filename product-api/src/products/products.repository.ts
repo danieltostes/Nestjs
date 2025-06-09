@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Product, ProductDocument } from "./schema/product.schema";
-import { Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 import { ProductDto } from "./interfaces/IProduct";
 
 @Injectable()
@@ -17,6 +17,11 @@ export class ProductsRepository {
   }
 
   async update(product: ProductDto) : Promise<ProductDto> {
+    if (!product.id) throw new HttpException("Product id should not be null", HttpStatus.BAD_REQUEST);
+
+    const isValid = mongoose.Types.ObjectId.isValid(product.id!);
+    if (!isValid) throw new HttpException("Product not found", HttpStatus.NOT_FOUND);
+
     const res = await this.productModel.updateOne({ _id: product.id }, product);
     
     if (res.modifiedCount == 0) throw new HttpException("Product not found", HttpStatus.NOT_FOUND);
@@ -24,7 +29,9 @@ export class ProductsRepository {
   }
 
   async remove(id: string) : Promise<string> {
-    await this.productModel.findByIdAndDelete(id);
+    const res = await this.productModel.findByIdAndDelete(id);
+    if (!res) throw new HttpException("Product not found", HttpStatus.NOT_FOUND);
+
     return "Product deleted";
   }
 
