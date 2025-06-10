@@ -7,7 +7,7 @@ import { Observable, tap } from 'rxjs';
   providedIn: 'root'
 })
 export class ProductService {
-  baseURL : string = "http://127.0.0.1:3000/products";
+  baseURL : string = "api/products";
   products : Product[] = [];
 
   constructor(private http: HttpClient) { }
