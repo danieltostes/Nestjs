@@ -1,34 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Product } from '../models/Product';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductService {
-  constructor() { }
+  baseURL : string = "http://127.0.0.1:3000/products";
+  products : Product[] = [];
 
-  public getAllProducts() : Product[] {
-    let products : Product[] = [
-      {
-        title: "product one",
-        description: "description for product one",
-        imageURL: "https://www.site.com.br/image.jpg",
-        id: "1234567890"
-      },
-      {
-        title: "product two",
-        description: "description for product two",
-        imageURL: "https://www.site.com.br/image.jpg",
-        id: "1234567890"
-      },
-      {
-        title: "product one",
-        description: "description for product three",
-        imageURL: "https://www.site.com.br/image.jpg",
-        id: "1234567890"
-      }
-    ]
+  constructor(private http: HttpClient) { }
 
-    return products;
+  // get all products
+  getProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>(this.baseURL).pipe(
+      tap((data: Product[]) => {
+        this.products = data;
+      })
+    );
   }
 }
